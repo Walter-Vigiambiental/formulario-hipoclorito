@@ -14,9 +14,9 @@ with st.form("form_entrega"):
     col1, col2 = st.columns(2)
     with col1:
         data_entrega = st.date_input("Data de entrega", value=datetime.today())
-        quant_pactuada = st.number_input("Quant. Pactuada (Caixas)", min_value=0.0, step=0.1)
-        quant_entregue = st.number_input("Quant. Entregue (Caixas)", min_value=0.0, step=0.1)
-        saldo_remanescente = st.number_input("Saldo Remanescente (Caixas)", min_value=0.0, step=0.1)
+        quant_pactuada = st.number_input("Quant. Pactuada (Caixas)", min_value=0, step=1, format="%d")
+        quant_entregue = st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d")
+        saldo_remanescente = st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d")
         vencimento = st.date_input("Vencimento", value=datetime.today())
     with col2:
         entregador = st.text_input("Entregador")
@@ -28,9 +28,9 @@ with st.form("form_entrega"):
     if enviado:
         entrega = {
             "Data de entrega": data_entrega.strftime("%d/%m/%Y"),
-            "Quant. Pactuada": quant_pactuada,
-            "Quant. Entregue": quant_entregue,
-            "Saldo Remanescente": saldo_remanescente,
+            "Quant. Pactuada": int(quant_pactuada),
+            "Quant. Entregue": int(quant_entregue),
+            "Saldo Remanescente": int(saldo_remanescente),
             "Vencimento": vencimento.strftime("%d/%m/%Y"),
             "Entregador": entregador,
             "Recebedor": recebedor,
@@ -57,4 +57,4 @@ else:
     st.info("Nenhuma entrega registrada ainda.")
 
 st.markdown("---")
-st.caption("Desenvolvido com ❤️ usando Streamlit.")
+st.caption("Desenvolvido por Walter Alves usando Streamlit.")

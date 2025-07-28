@@ -18,13 +18,12 @@ def formatar_data(data):
     return data.strftime("%d/%m/%Y") if data else ""
 
 def carregar_entregas():
-     if os.path.exists(CSV_FILE):
+    if os.path.exists(CSV_FILE):
         try:
             return pd.read_csv(CSV_FILE).to_dict(orient="records")
         except pd.errors.EmptyDataError:
             return []
     return []
-
 
 def salvar_entregas(entregas):
     df = pd.DataFrame(entregas)

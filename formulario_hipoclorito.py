@@ -187,7 +187,7 @@ if st.session_state.entregas:
                             st.session_state.entregas.pop(i)
                             salvar_entregas(st.session_state.entregas)
                             st.success("✅ Lançamento excluído com sucesso!")
-                            st.experimental_rerun()
+                            st.rerun()
                         else:
                             st.error("❌ Senha incorreta.")
 

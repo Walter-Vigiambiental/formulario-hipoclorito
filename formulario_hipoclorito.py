@@ -86,14 +86,24 @@ def gerar_pdf_historico(entregas):
 def enviar_email(destinatario, pdf_buffer):
     try:
         yag = yagmail.SMTP("vigiambientalmochipoclorito@gmail.com", "reyzteerwjszvnsl")
+        
+        # Salva temporariamente o PDF para envio
+        with open("registro_entrega.pdf", "wb") as f:
+            f.write(pdf_buffer.read())
+
         yag.send(
             to=destinatario,
             subject="📄 Registro de Entrega - Hipoclorito",
             contents="Segue em anexo o registro da entrega em PDF.",
-            attachments=[("registro_entrega.pdf", pdf_buffer)]
+            attachments="registro_entrega.pdf"
         )
+
+        # Remove o arquivo temporário
+        os.remove("registro_entrega.pdf")
+
         yag.close()
         return True
+
     except Exception as e:
         st.error(f"Erro ao enviar e-mail: {e}")
         return False

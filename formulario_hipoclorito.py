@@ -10,8 +10,8 @@ st.set_page_config(page_title="Formulário Hipoclorito", page_icon="📦", layou
 st.title("📦 Formulário de Entrega de Hipoclorito")
 
 CSV_FILE = "entregas_hipoclorito.csv"
+EMAIL_DESTINO_FIXO = "vigiambientalmochipoclorito@gmail.com"
 
-# Funções auxiliares
 def formatar_data(data):
     return data.strftime("%d/%m/%Y") if data else ""
 
@@ -39,7 +39,7 @@ def gerar_pdf(entrega):
 
 def enviar_email(destinatario, pdf_buffer):
     try:
-        yag = yagmail.SMTP("vigiambientalmochipoclorito@gmail.com", "reyz teer wjsz vnsl")
+        yag = yagmail.SMTP("vigiambientalmochipoclorito@gmail.com", "SUA_SENHA_DE_APP")
         yag.send(
             to=destinatario,
             subject="📄 Registro de Entrega - Hipoclorito",
@@ -52,7 +52,6 @@ def enviar_email(destinatario, pdf_buffer):
         st.error(f"Erro ao enviar e-mail: {e}")
         return False
 
-# Estado inicial
 if "entregas" not in st.session_state:
     st.session_state.entregas = carregar_entregas()
 
@@ -64,7 +63,6 @@ localidades = [
     "Ponta do Morro", "Sec. Vigilância em Saúde", "Defesa Civil"
 ]
 
-# Formulário
 with st.form("form_entrega"):
     col1, col2 = st.columns(2)
     with col1:
@@ -96,8 +94,6 @@ with st.form("form_entrega"):
     with col10:
         observacoes = st.text_area("Observações")
 
-    email_destino = st.text_input("E-mail para envio do PDF")
-
     enviado = st.form_submit_button("📤 Registrar entrega")
 
     if enviado:
@@ -112,17 +108,16 @@ with st.form("form_entrega"):
             "Vencimento B": formatar_data(vencimento_b),
             "Recebedor": recebedor,
             "Observações": observacoes,
-            "Email destino": email_destino
+            "Email destino": EMAIL_DESTINO_FIXO
         }
 
         st.session_state.entregas.append(entrega)
         salvar_entregas(st.session_state.entregas)
 
         pdf_buffer = gerar_pdf(entrega)
-        if enviar_email(email_destino, pdf_buffer):
-            st.success("✅ Entrega registrada e PDF enviado por e-mail com sucesso!")
+        if enviar_email(EMAIL_DESTINO_FIXO, pdf_buffer):
+            st.success("✅ Entrega registrada e PDF enviado automaticamente para o e-mail do sistema!")
 
-# Histórico
 if st.session_state.entregas:
     st.subheader("📄 Histórico de Entregas")
     df = pd.DataFrame(st.session_state.entregas)

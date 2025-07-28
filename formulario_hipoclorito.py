@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
 from io import BytesIO
 import yagmail
 import os
@@ -26,13 +27,34 @@ def salvar_entregas(entregas):
 
 def gerar_pdf(entrega):
     buffer = BytesIO()
-    c = canvas.Canvas(buffer)
+    c = canvas.Canvas(buffer, pagesize=A4)
     c.setFont("Helvetica", 12)
     c.drawString(100, 800, "📦 Registro de Entrega de Hipoclorito")
     y = 760
     for chave, valor in entrega.items():
         c.drawString(100, y, f"{chave}: {valor}")
         y -= 20
+    c.save()
+    buffer.seek(0)
+    return buffer
+
+def gerar_pdf_historico(entregas):
+    buffer = BytesIO()
+    c = canvas.Canvas(buffer, pagesize=A4)
+    c.setFont("Helvetica", 11)
+    c.drawString(100, 820, "📋 Histórico de Entregas de Hipoclorito")
+    y = 800
+    for i, entrega in enumerate(entregas, start=1):
+        y -= 20
+        c.drawString(80, y, f"Entrega {i}:")
+        y -= 15
+        for chave, valor in entrega.items():
+            c.drawString(100, y, f"{chave}: {valor}")
+            y -= 15
+            if y < 100:  # quebra de página
+                c.showPage()
+                c.setFont("Helvetica", 11)
+                y = 800
     c.save()
     buffer.seek(0)
     return buffer
@@ -69,65 +91,59 @@ with st.form("form_entrega"):
         quant_pactuada = st.number_input("Quant. Pactuada (Caixas)", min_value=0, step=1, format="%d")
     with col2:
         entregador = st.text_input("Entregador")
-
     col3, col4 = st.columns(2)
     with col3:
         localidade = st.selectbox("Localidade", localidades)
     with col4:
         data_entrega = st.date_input("Data de entrega", value=None, format="DD/MM/YYYY", key="data_entrega")
-
     col5, col6 = st.columns(2)
     with col5:
         quant_entregue = st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d")
     with col6:
         vencimento_a = st.date_input("Vencimento", value=None, format="DD/MM/YYYY", key="vencimento_a")
-
     col7, col8 = st.columns(2)
     with col7:
         saldo_remanescente = st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d")
     with col8:
         vencimento_b = st.date_input("Vencimento", value=None, format="DD/MM/YYYY", key="vencimento_b")
-
     col9, col10 = st.columns(2)
     with col9:
         recebedor = st.text_input("Recebedor")
     with col10:
         observacoes = st.text_area("Observações")
-
     enviado = st.form_submit_button("📤 Registrar entrega")
 
-    if enviado:
-        entrega = {
-            "Quant. Pactuada": int(quant_pactuada),
-            "Entregador": entregador,
-            "Localidade": localidade,
-            "Data de entrega": formatar_data(data_entrega),
-            "Quant. Entregue": int(quant_entregue),
-            "Vencimento A": formatar_data(vencimento_a),
-            "Saldo Remanescente": int(saldo_remanescente),
-            "Vencimento B": formatar_data(vencimento_b),
-            "Recebedor": recebedor,
-            "Observações": observacoes,
-            "Email destino": EMAIL_DESTINO_FIXO
-        }
-
-        st.session_state.entregas.append(entrega)
-        salvar_entregas(st.session_state.entregas)
-
-        pdf_buffer = gerar_pdf(entrega)
-        if enviar_email(EMAIL_DESTINO_FIXO, pdf_buffer):
-            st.success("✅ Entrega registrada e PDF enviado automaticamente para o e-mail do sistema!")
+if enviado:
+    entrega = {
+        "Quant. Pactuada": int(quant_pactuada),
+        "Entregador": entregador,
+        "Localidade": localidade,
+        "Data de entrega": formatar_data(data_entrega),
+        "Quant. Entregue": int(quant_entregue),
+        "Vencimento A": formatar_data(vencimento_a),
+        "Saldo Remanescente": int(saldo_remanescente),
+        "Vencimento B": formatar_data(vencimento_b),
+        "Recebedor": recebedor,
+        "Observações": observacoes,
+        "Email destino": EMAIL_DESTINO_FIXO
+    }
+    st.session_state.entregas.append(entrega)
+    salvar_entregas(st.session_state.entregas)
+    pdf_buffer = gerar_pdf(entrega)
+    if enviar_email(EMAIL_DESTINO_FIXO, pdf_buffer):
+        st.success("✅ Entrega registrada e PDF enviado automaticamente para o e-mail do sistema!")
 
 if st.session_state.entregas:
     st.subheader("📄 Histórico de Entregas")
     df = pd.DataFrame(st.session_state.entregas)
     st.dataframe(df, use_container_width=True)
-    csv = df.to_csv(index=False).encode("utf-8")
+
+    pdf_historico = gerar_pdf_historico(st.session_state.entregas)
     st.download_button(
-        label="📥 Exportar para CSV",
-        data=csv,
-        file_name="entregas_hipoclorito.csv",
-        mime="text/csv"
+        label="📥 Exportar Histórico em PDF",
+        data=pdf_historico,
+        file_name="historico_entregas_hipoclorito.pdf",
+        mime="application/pdf"
     )
 else:
     st.info("Nenhuma entrega registrada ainda.")

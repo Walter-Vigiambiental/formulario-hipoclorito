@@ -41,23 +41,42 @@ def gerar_pdf(entrega):
 def gerar_pdf_historico(entregas):
     buffer = BytesIO()
     c = canvas.Canvas(buffer, pagesize=A4)
-    c.setFont("Helvetica", 11)
-    c.drawString(100, 820, "📋 Histórico de Entregas de Hipoclorito")
-    y = 800
+    largura, altura = A4
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(80, altura - 50, "📋 Histórico de Entregas de Hipoclorito")
+    y = altura - 80
     for i, entrega in enumerate(entregas, start=1):
-        y -= 20
-        c.drawString(80, y, f"Entrega {i}:")
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString(80, y, f"Entrega {i}")
         y -= 15
-        for chave, valor in entrega.items():
-            # Se for NaN, exibe vazio
-            if pd.isna(valor):
-                valor = ""
-            c.drawString(100, y, f"{chave}: {valor}")
+        c.setFont("Helvetica", 11)
+
+        colunas = [
+            ("Quant. Pactuada", "Quant. Entregue"),
+            ("Vencimento A", "Vencimento B"),
+            ("Saldo Remanescente", "Recebedor"),
+            ("Entregador", "Localidade"),
+            ("Data de entrega", "Observações"),
+        ]
+
+        for campo1, campo2 in colunas:
+            valor1 = "" if pd.isna(entrega.get(campo1)) else str(entrega.get(campo1))
+            valor2 = "" if pd.isna(entrega.get(campo2)) else str(entrega.get(campo2))
+            c.drawString(80, y, f"{campo1}: {valor1}")
+            c.drawString(300, y, f"{campo2}: {valor2}")
             y -= 15
-            if y < 100:  # quebra de página
-                c.showPage()
-                c.setFont("Helvetica", 11)
-                y = 800
+
+        email_destino = "" if pd.isna(entrega.get("Email destino")) else str(entrega.get("Email destino"))
+        c.drawString(80, y, f"Email destino: {email_destino}")
+        y -= 25
+
+        # quebra de página se necessário
+        if y < 100:
+            c.showPage()
+            c.setFont("Helvetica-Bold", 14)
+            c.drawString(80, altura - 50, "📋 Histórico de Entregas de Hipoclorito (continuação)")
+            y = altura - 80
+
     c.save()
     buffer.seek(0)
     return buffer

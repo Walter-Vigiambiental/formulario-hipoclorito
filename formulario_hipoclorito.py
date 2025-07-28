@@ -27,7 +27,6 @@ localidades = [
     "Defesa Civil"
 ]
 
-# Função para validar se a data foi alterada
 def data_foi_alterada(data_selecionada):
     return data_selecionada.date() != datetime.today().date()
 
@@ -37,10 +36,11 @@ with st.form("form_entrega"):
     with col1:
         st.caption("📅 Selecione a data no calendário:")
         data_entrega = st.date_input("Data de entrega", value=datetime.today(), format="DD/MM/YYYY")
-        vencimento = st.date_input("Vencimento", value=datetime.today(), format="DD/MM/YYYY")
         quant_pactuada = st.number_input("Quant. Pactuada (Caixas)", min_value=0, step=1, format="%d")
         quant_entregue = st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d")
         saldo_remanescente = st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d")
+        vencimento_entregue = st.date_input("Vencimento do produto entregue", value=datetime.today(), format="DD/MM/YYYY")
+        vencimento_saldo = st.date_input("Vencimento do saldo remanescente", value=datetime.today(), format="DD/MM/YYYY")
     with col2:
         entregador = st.text_input("Entregador")
         recebedor = st.text_input("Recebedor")
@@ -50,9 +50,11 @@ with st.form("form_entrega"):
     enviado = st.form_submit_button("📤 Registrar entrega")
     if enviado:
         if not data_foi_alterada(data_entrega):
-            st.error("⛔ Por favor, selecione a data correta de entrega no calendário.")
-        elif not data_foi_alterada(vencimento):
-            st.error("⛔ Por favor, selecione o vencimento correto no calendário.")
+            st.error("⛔ Por favor, selecione a data de entrega.")
+        elif not data_foi_alterada(vencimento_entregue):
+            st.error("⛔ Selecione o vencimento do produto entregue.")
+        elif not data_foi_alterada(vencimento_saldo):
+            st.error("⛔ Selecione o vencimento do saldo remanescente.")
         elif localidade == "Selecione uma localidade...":
             st.error("⛔ Selecione uma localidade válida.")
         else:
@@ -61,7 +63,8 @@ with st.form("form_entrega"):
                 "Quant. Pactuada": int(quant_pactuada),
                 "Quant. Entregue": int(quant_entregue),
                 "Saldo Remanescente": int(saldo_remanescente),
-                "Vencimento": vencimento.strftime("%d/%m/%Y"),
+                "Vencimento do produto entregue": vencimento_entregue.strftime("%d/%m/%Y"),
+                "Vencimento do saldo remanescente": vencimento_saldo.strftime("%d/%m/%Y"),
                 "Entregador": entregador,
                 "Recebedor": recebedor,
                 "Localidade": localidade,

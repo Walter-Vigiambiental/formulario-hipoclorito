@@ -12,6 +12,7 @@ st.title("📦 Formulário de Entrega de Hipoclorito")
 
 CSV_FILE = "entregas_hipoclorito.csv"
 EMAIL_DESTINO_FIXO = "vigiambientalmochipoclorito@gmail.com"
+SENHA_EXCLUSAO = "hipoclorito2025"
 
 def formatar_data(data):
     return data.strftime("%d/%m/%Y") if data else ""
@@ -52,7 +53,7 @@ def gerar_pdf_historico(entregas):
         y -= 15
         c.setFont("Helvetica", 11)
 
-        # Ordem de exibição espelhando o formulário
+        # Mesma ordem do formulário
         pares_de_campos = [
             ("Quant. Pactuada", "Entregador"),
             ("Localidade", "Data de entrega"),
@@ -168,8 +169,30 @@ if st.session_state.entregas:
         file_name="historico_entregas_hipoclorito.pdf",
         mime="application/pdf"
     )
+
+    st.subheader("🗑️ Gerenciar Lançamentos")
+
+    for i, entrega in enumerate(st.session_state.entregas):
+        with st.expander(f"Entrega {i + 1} - {entrega.get('Localidade', 'Sem local')}"):
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                for chave, valor in entrega.items():
+                    valor_formatado = "" if pd.isna(valor) else str(valor)
+                    st.markdown(f"**{chave}:** {valor_formatado}")
+            with col2:
+                if st.button(f"🗑️ Excluir", key=f"del_{i}"):
+                    senha = st.text_input("Digite a senha", type="password", key=f"senha_{i}")
+                    if senha:
+                        if senha == SENHA_EXCLUSAO:
+                            st.session_state.entregas.pop(i)
+                            salvar_entregas(st.session_state.entregas)
+                            st.success("✅ Lançamento excluído com sucesso!")
+                            st.experimental_rerun()
+                        else:
+                            st.error("❌ Senha incorreta.")
+
 else:
     st.info("Nenhuma entrega registrada ainda.")
 
 st.markdown("---")
-st.caption("Desenvolvido por Walter Alves usando Streamlit.")
+st.caption("Desenvolvido por Walter Alves

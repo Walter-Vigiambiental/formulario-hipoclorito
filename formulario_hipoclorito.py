@@ -56,7 +56,6 @@ def gerar_pdf_historico(entregas):
         y -= 15
         c.setFont("Helvetica", 11)
 
-        # Mesma ordem do formulário
         pares_de_campos = [
             ("Quant. Pactuada", "Entregador"),
             ("Localidade", "Data de entrega"),
@@ -89,8 +88,6 @@ def gerar_pdf_historico(entregas):
 def enviar_email(destinatario, pdf_buffer):
     try:
         yag = yagmail.SMTP("vigiambientalmochipoclorito@gmail.com", "reyzteerwjszvnsl")
-        
-        # Salva temporariamente o PDF para envio
         with open("registro_entrega.pdf", "wb") as f:
             f.write(pdf_buffer.read())
 
@@ -101,9 +98,7 @@ def enviar_email(destinatario, pdf_buffer):
             attachments="registro_entrega.pdf"
         )
 
-        # Remove o arquivo temporário
         os.remove("registro_entrega.pdf")
-
         yag.close()
         return True
 
@@ -113,6 +108,13 @@ def enviar_email(destinatario, pdf_buffer):
 
 if "entregas" not in st.session_state:
     st.session_state.entregas = carregar_entregas()
+
+# ➕ Botão para limpar o formulário
+if st.button("➕ Inserir Novo Lançamento"):
+    for chave in list(st.session_state.keys()):
+        if chave not in ["entregas"]:
+            del st.session_state[chave]
+    st.rerun()
 
 localidades = [
     "Selecione uma localidade...",
@@ -203,7 +205,6 @@ if st.session_state.entregas:
                             st.rerun()
                         else:
                             st.error("❌ Senha incorreta.")
-
 else:
     st.info("Nenhuma entrega registrada ainda.")
 

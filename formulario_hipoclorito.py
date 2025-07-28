@@ -9,6 +9,23 @@ st.title("📦 Formulário de Entrega de Hipoclorito")
 if "entregas" not in st.session_state:
     st.session_state.entregas = []
 
+# Lista de localidades
+localidades = [
+    "Miralta",
+    "Nova Esperança",
+    "Santa Rosa",
+    "Ermidinha",
+    "Samambaia",
+    "São Pedro da Garça",
+    "Aparecida Mundo Novo",
+    "Canto Engenho",
+    "Santa Barbara",
+    "Planalto Rural",
+    "Ponta do Morro",
+    "Sec. Vigilância em Saúde",
+    "Defesa Civil"
+]
+
 # Formulário
 with st.form("form_entrega"):
     col1, col2 = st.columns(2)
@@ -21,7 +38,7 @@ with st.form("form_entrega"):
     with col2:
         entregador = st.text_input("Entregador")
         recebedor = st.text_input("Recebedor")
-        localidade = st.text_input("Localidade")
+        localidade = st.selectbox("Localidade", localidades)
         observacoes = st.text_area("Observações")
 
     enviado = st.form_submit_button("📤 Registrar entrega")
@@ -57,4 +74,4 @@ else:
     st.info("Nenhuma entrega registrada ainda.")
 
 st.markdown("---")
-st.caption("Desenvolvido por Walter Alves usando Streamlit.")
+st.caption("Desenvolvido com ❤️ usando Streamlit.")

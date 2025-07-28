@@ -165,10 +165,12 @@ if enviado:
         "Email destino": EMAIL_DESTINO_FIXO
     }
     st.session_state.entregas.append(entrega)
-    salvar_entregas(st.session_state.entregas)
+        salvar_entregas(st.session_state.entregas)
     pdf_buffer = gerar_pdf(entrega)
     if enviar_email(EMAIL_DESTINO_FIXO, pdf_buffer):
         st.success("✅ Entrega registrada e PDF enviado automaticamente para o e-mail do sistema!")
+        st.rerun()  # Limpa o formulário ao recarregar a página
+
 
 if st.session_state.entregas:
     st.subheader("📄 Histórico de Entregas")

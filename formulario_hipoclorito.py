@@ -49,6 +49,9 @@ def gerar_pdf_historico(entregas):
         c.drawString(80, y, f"Entrega {i}:")
         y -= 15
         for chave, valor in entrega.items():
+            # Se for NaN, exibe vazio
+            if pd.isna(valor):
+                valor = ""
             c.drawString(100, y, f"{chave}: {valor}")
             y -= 15
             if y < 100:  # quebra de página

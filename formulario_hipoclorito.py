@@ -23,7 +23,6 @@ with st.form("form_entrega"):
         recebedor = st.text_input("Recebedor")
         localidade = st.text_input("Localidade")
         observacoes = st.text_area("Observações")
-        assinatura = st.file_uploader("Assinatura / Carimbo (imagem)", type=["png", "jpg", "jpeg"])
 
     enviado = st.form_submit_button("📤 Registrar entrega")
     if enviado:
@@ -36,8 +35,7 @@ with st.form("form_entrega"):
             "Entregador": entregador,
             "Recebedor": recebedor,
             "Localidade": localidade,
-            "Observações": observacoes,
-            "Assinatura": assinatura.name if assinatura else "Não enviada"
+            "Observações": observacoes
         }
         st.session_state.entregas.append(entrega)
         st.success("✅ Entrega registrada com sucesso!")

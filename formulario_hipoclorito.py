@@ -27,23 +27,16 @@ localidades = [
     "Defesa Civil"
 ]
 
-# Função para validar e converter datas
-def validar_data(data_str):
-    try:
-        return datetime.strptime(data_str.strip(), "%d/%m/%Y")
-    except:
-        return None
-
 # Formulário
 with st.form("form_entrega"):
     col1, col2 = st.columns(2)
     with col1:
-        data_entrega_input = st.text_input("Data de entrega", placeholder="Selecione (dd/mm/aaaa)")
+        data_entrega = st.date_input("Data de entrega", format="DD/MM/YYYY")
         quant_pactuada = st.number_input("Quant. Pactuada (Caixas)", min_value=0, step=1, format="%d")
         quant_entregue = st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d")
         saldo_remanescente = st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d")
-        vencimento_entregue_input = st.text_input("Vencimento do produto entregue", placeholder="Selecione (dd/mm/aaaa)")
-        vencimento_saldo_input = st.text_input("Vencimento do saldo remanescente", placeholder="Selecione (dd/mm/aaaa)")
+        vencimento_entregue = st.date_input("Vencimento do produto entregue", format="DD/MM/YYYY")
+        vencimento_saldo = st.date_input("Vencimento do saldo remanescente", format="DD/MM/YYYY")
     with col2:
         entregador = st.text_input("Entregador")
         recebedor = st.text_input("Recebedor")
@@ -52,17 +45,7 @@ with st.form("form_entrega"):
 
     enviado = st.form_submit_button("📤 Registrar entrega")
     if enviado:
-        data_entrega = validar_data(data_entrega_input)
-        vencimento_entregue = validar_data(vencimento_entregue_input)
-        vencimento_saldo = validar_data(vencimento_saldo_input)
-
-        if not data_entrega:
-            st.error("⛔ Informe a Data de Entrega no formato dd/mm/aaaa.")
-        elif not vencimento_entregue:
-            st.error("⛔ Informe o Vencimento do produto entregue.")
-        elif not vencimento_saldo:
-            st.error("⛔ Informe o Vencimento do saldo remanescente.")
-        elif localidade == "Selecione uma localidade...":
+        if localidade == "Selecione uma localidade...":
             st.error("⛔ Escolha uma localidade válida.")
         else:
             entrega = {

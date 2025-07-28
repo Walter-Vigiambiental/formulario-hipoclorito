@@ -111,13 +111,9 @@ if "entregas" not in st.session_state:
 
 # ➕ Botão para limpar o formulário
 if st.button("➕ Inserir Novo Lançamento"):
-    campos_formulario = [
-        "quant_pactuada", "entregador", "localidade", "data_entrega",
-        "quant_entregue", "vencimento_a", "saldo_remanescente", "vencimento_b",
-        "recebedor", "observacoes"
-    ]
-    for campo in campos_formulario:
-        st.session_state[campo] = None if "data" in campo or "vencimento" in campo else ""
+    for chave in list(st.session_state.keys()):
+        if chave not in ["entregas"]:
+            del st.session_state[chave]
     st.rerun()
 
 localidades = [
@@ -131,33 +127,30 @@ localidades = [
 with st.form("form_entrega"):
     col1, col2 = st.columns(2)
     with col1:
-        quant_pactuada = st.number_input("Quant. Pactuada (Caixas)", min_value=0, step=1, format="%d", key="quant_pactuada")
+        quant_pactuada = st.number_input("Quant. Pactuada (Caixas)", min_value=0, step=1, format="%d")
     with col2:
-        entregador = st.text_input("Entregador", key="entregador")
+        entregador = st.text_input("Entregador")
     col3, col4 = st.columns(2)
     with col3:
-        localidade = st.selectbox("Localidade", localidades, key="localidade")
+        localidade = st.selectbox("Localidade", localidades)
     with col4:
-        data_entrega = st.date_input("Data de entrega", key="data_entrega")
+        data_entrega = st.date_input("Data de entrega", value=None, format="DD/MM/YYYY", key="data_entrega")
     col5, col6 = st.columns(2)
     with col5:
-        quant_entregue = st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d", key="quant_entregue")
+        quant_entregue = st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d")
     with col6:
-        vencimento_a = st.date_input("Vencimento", key="vencimento_a")
+        vencimento_a = st.date_input("Vencimento", value=None, format="DD/MM/YYYY", key="vencimento_a")
     col7, col8 = st.columns(2)
     with col7:
-        saldo_remanescente = st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d", key="saldo_remanescente")
+        saldo_remanescente = st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d")
     with col8:
-        vencimento_b = st.date_input("Vencimento", key="vencimento_b")
+        vencimento_b = st.date_input("Vencimento", value=None, format="DD/MM/YYYY", key="vencimento_b")
     col9, col10 = st.columns(2)
     with col9:
-        recebedor = st.text_input("Recebedor", key="recebedor")
+        recebedor = st.text_input("Recebedor")
     with col10:
-        observacoes = st.text_area("Observações", key="observacoes")
-
-    # ✅ ESSA LINHA É O BOTÃO DE SUBMISSÃO
+        observacoes = st.text_area("Observações")
     enviado = st.form_submit_button("📤 Registrar entrega")
-
 
 if enviado:
     entrega = {

@@ -5,7 +5,7 @@ import locale
 
 # Define o idioma para português do Brasil
 try:
-    locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
+    locale.setlocale(locale.LC_TIME, "Portuguese_Brazil.1252")
 except:
     st.warning("⚠️ Não foi possível aplicar o idioma pt_BR. Verifique se está instalado no sistema.")
 

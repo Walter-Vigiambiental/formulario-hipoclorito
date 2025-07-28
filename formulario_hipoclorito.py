@@ -39,7 +39,7 @@ def gerar_pdf(entrega):
 
 def enviar_email(destinatario, pdf_buffer):
     try:
-        yag = yagmail.SMTP("vigiambientalmochipoclorito@gmail.com", "SUA_SENHA_DE_APP")
+        yag = yagmail.SMTP("vigiambientalmochipoclorito@gmail.com", "reyz teer wjsz vnsl")
         yag.send(
             to=destinatario,
             subject="📄 Registro de Entrega - Hipoclorito",

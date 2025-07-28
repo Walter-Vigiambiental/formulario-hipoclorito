@@ -45,21 +45,23 @@ def gerar_pdf_historico(entregas):
     c.setFont("Helvetica-Bold", 14)
     c.drawString(80, altura - 50, "📋 Histórico de Entregas de Hipoclorito")
     y = altura - 80
+
     for i, entrega in enumerate(entregas, start=1):
         c.setFont("Helvetica-Bold", 12)
         c.drawString(80, y, f"Entrega {i}")
         y -= 15
         c.setFont("Helvetica", 11)
 
-        colunas = [
-            ("Quant. Pactuada", "Quant. Entregue"),
-            ("Vencimento A", "Vencimento B"),
-            ("Saldo Remanescente", "Recebedor"),
-            ("Entregador", "Localidade"),
-            ("Data de entrega", "Observações"),
+        # Ordem de exibição espelhando o formulário
+        pares_de_campos = [
+            ("Quant. Pactuada", "Entregador"),
+            ("Localidade", "Data de entrega"),
+            ("Quant. Entregue", "Vencimento A"),
+            ("Saldo Remanescente", "Vencimento B"),
+            ("Recebedor", "Observações"),
         ]
 
-        for campo1, campo2 in colunas:
+        for campo1, campo2 in pares_de_campos:
             valor1 = "" if pd.isna(entrega.get(campo1)) else str(entrega.get(campo1))
             valor2 = "" if pd.isna(entrega.get(campo2)) else str(entrega.get(campo2))
             c.drawString(80, y, f"{campo1}: {valor1}")
@@ -70,7 +72,6 @@ def gerar_pdf_historico(entregas):
         c.drawString(80, y, f"Email destino: {email_destino}")
         y -= 25
 
-        # quebra de página se necessário
         if y < 100:
             c.showPage()
             c.setFont("Helvetica-Bold", 14)

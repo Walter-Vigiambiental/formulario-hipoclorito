@@ -35,11 +35,11 @@ def formatar_data(data):
 with st.form("form_entrega"):
     col1, col2 = st.columns(2)
     with col1:
-        data_entrega = st.date_input("Data de entrega", value=datetime.today(), format="DD/MM/YYYY")
+        data_entrega = st.date_input("Data de entrega", value=datetime.today(), format="DD/MM/YYYY", key="data_entrega")
         quant_pactuada = st.number_input("Quant. Pactuada (Caixas)", min_value=0, step=1, format="%d")
         quant_entregue = st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d")
-        vencimento_a = st.date_input("Vencimento A", value=datetime.today(), format="DD/MM/YYYY")
-        vencimento_b = st.date_input("Vencimento B", value=datetime.today(), format="DD/MM/YYYY")
+        vencimento_a = st.date_input("Vencimento", value=datetime.today(), format="DD/MM/YYYY", key="vencimento_a")
+        vencimento_b = st.date_input("Vencimento", value=datetime.today(), format="DD/MM/YYYY", key="vencimento_b")
         saldo_remanescente = st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d")
     with col2:
         entregador = st.text_input("Entregador")

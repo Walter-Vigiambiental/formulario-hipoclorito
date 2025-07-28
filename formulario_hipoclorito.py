@@ -44,7 +44,7 @@ def enviar_email(destinatario, pdf_buffer):
             to=destinatario,
             subject="📄 Registro de Entrega - Hipoclorito",
             contents="Segue em anexo o registro da entrega em PDF.",
-            attachments={"registro_entrega.pdf": pdf_buffer}
+            attachments=[("registro_entrega.pdf", pdf_buffer)]
         )
         yag.close()
         return True

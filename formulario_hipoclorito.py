@@ -27,19 +27,17 @@ localidades = [
     "Defesa Civil"
 ]
 
-# Função de validação de data
-def validar_data(data_str):
-    try:
-        return datetime.strptime(data_str.strip(), "%d/%m/%Y")
-    except:
-        return None
+# Função para validar se a data foi alterada
+def data_foi_alterada(data_selecionada):
+    return data_selecionada.date() != datetime.today().date()
 
 # Formulário
 with st.form("form_entrega"):
     col1, col2 = st.columns(2)
     with col1:
-        data_entrega_input = st.text_input("Data de entrega (dd/mm/aaaa)", placeholder="01/01/2025")
-        vencimento_input = st.text_input("Vencimento (dd/mm/aaaa)", placeholder="01/01/2025")
+        st.caption("📅 Selecione a data no calendário:")
+        data_entrega = st.date_input("Data de entrega", value=datetime.today(), format="DD/MM/YYYY")
+        vencimento = st.date_input("Vencimento", value=datetime.today(), format="DD/MM/YYYY")
         quant_pactuada = st.number_input("Quant. Pactuada (Caixas)", min_value=0, step=1, format="%d")
         quant_entregue = st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d")
         saldo_remanescente = st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d")
@@ -51,13 +49,12 @@ with st.form("form_entrega"):
 
     enviado = st.form_submit_button("📤 Registrar entrega")
     if enviado:
-        data_entrega = validar_data(data_entrega_input)
-        vencimento = validar_data(vencimento_input)
-
-        if not data_entrega or not vencimento:
-            st.error("⛔ Informe datas válidas no formato dd/mm/aaaa.")
+        if not data_foi_alterada(data_entrega):
+            st.error("⛔ Por favor, selecione a data correta de entrega no calendário.")
+        elif not data_foi_alterada(vencimento):
+            st.error("⛔ Por favor, selecione o vencimento correto no calendário.")
         elif localidade == "Selecione uma localidade...":
-            st.error("⛔ Escolha uma localidade válida.")
+            st.error("⛔ Selecione uma localidade válida.")
         else:
             entrega = {
                 "Data de entrega": data_entrega.strftime("%d/%m/%Y"),

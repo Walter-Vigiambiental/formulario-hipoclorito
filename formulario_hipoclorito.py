@@ -1,6 +1,13 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
+from datetime import date
+import locale
+
+# Define o idioma para português do Brasil
+try:
+    locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
+except:
+    st.warning("⚠️ Não foi possível aplicar o idioma pt_BR. Verifique se está instalado no sistema.")
 
 st.set_page_config(page_title="Formulário Hipoclorito", page_icon="📦", layout="centered")
 st.title("📦 Formulário de Entrega de Hipoclorito")
@@ -49,12 +56,12 @@ with st.form("form_entrega"):
             st.error("⛔ Escolha uma localidade válida.")
         else:
             entrega = {
-                "Data de entrega": data_entrega.strftime("%d/%m/%Y"),
+                "Data de entrega": data_entrega.strftime("%d de %B de %Y"),
                 "Quant. Pactuada": int(quant_pactuada),
                 "Quant. Entregue": int(quant_entregue),
                 "Saldo Remanescente": int(saldo_remanescente),
-                "Vencimento do produto entregue": vencimento_entregue.strftime("%d/%m/%Y"),
-                "Vencimento do saldo remanescente": vencimento_saldo.strftime("%d/%m/%Y"),
+                "Vencimento do produto entregue": vencimento_entregue.strftime("%d de %B de %Y"),
+                "Vencimento do saldo remanescente": vencimento_saldo.strftime("%d de %B de %Y"),
                 "Entregador": entregador,
                 "Recebedor": recebedor,
                 "Localidade": localidade,

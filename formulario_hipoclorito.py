@@ -33,32 +33,54 @@ def formatar_data(data):
 
 # Formulário
 with st.form("form_entrega"):
+    # Linha 1: Quant. Pactuada — Entregador
     col1, col2 = st.columns(2)
     with col1:
-        data_entrega = st.date_input("Data de entrega", value=datetime.today(), format="DD/MM/YYYY", key="data_entrega")
         quant_pactuada = st.number_input("Quant. Pactuada (Caixas)", min_value=0, step=1, format="%d")
-        quant_entregue = st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d")
-        vencimento_a = st.date_input("Vencimento", value=datetime.today(), format="DD/MM/YYYY", key="vencimento_a")
-        vencimento_b = st.date_input("Vencimento", value=datetime.today(), format="DD/MM/YYYY", key="vencimento_b")
-        saldo_remanescente = st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d")
     with col2:
         entregador = st.text_input("Entregador")
-        recebedor = st.text_input("Recebedor")
+
+    # Linha 2: Localidade — Data Entrega
+    col3, col4 = st.columns(2)
+    with col3:
         localidade = st.selectbox("Localidade", localidades)
+    with col4:
+        data_entrega = st.date_input("Data de entrega", value=datetime.today(), format="DD/MM/YYYY", key="data_entrega")
+
+    # Linha 3: Quant. Entregue — Vencimento A
+    col5, col6 = st.columns(2)
+    with col5:
+        quant_entregue = st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d")
+    with col6:
+        vencimento_a = st.date_input("Vencimento", value=datetime.today(), format="DD/MM/YYYY", key="vencimento_a")
+
+    # Linha 4: Saldo Remanescente — Vencimento B
+    col7, col8 = st.columns(2)
+    with col7:
+        saldo_remanescente = st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d")
+    with col8:
+        vencimento_b = st.date_input("Vencimento", value=datetime.today(), format="DD/MM/YYYY", key="vencimento_b")
+
+    # Linha 5: Recebedor — Observações
+    col9, col10 = st.columns(2)
+    with col9:
+        recebedor = st.text_input("Recebedor")
+    with col10:
         observacoes = st.text_area("Observações")
+
     enviado = st.form_submit_button("📤 Registrar entrega")
 
     if enviado:
         entrega = {
-            "Data de entrega": formatar_data(data_entrega),
             "Quant. Pactuada": int(quant_pactuada),
+            "Entregador": entregador,
+            "Localidade": localidade,
+            "Data de entrega": formatar_data(data_entrega),
             "Quant. Entregue": int(quant_entregue),
             "Vencimento A": formatar_data(vencimento_a),
-            "Vencimento B": formatar_data(vencimento_b),
             "Saldo Remanescente": int(saldo_remanescente),
-            "Entregador": entregador,
+            "Vencimento B": formatar_data(vencimento_b),
             "Recebedor": recebedor,
-            "Localidade": localidade,
             "Observações": observacoes
         }
         st.session_state.entregas.append(entrega)

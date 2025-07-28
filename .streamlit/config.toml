@@ -1,3 +1,6 @@
+[client]
+locale = "pt-BR"
+
 [theme]
 primaryColor = "#168aad"
 backgroundColor = "#f8f9fa"

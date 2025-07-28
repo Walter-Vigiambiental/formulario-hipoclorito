@@ -27,7 +27,7 @@ localidades = [
     "Defesa Civil"
 ]
 
-# Valida e converte string para data
+# Função para validar e converter datas
 def validar_data(data_str):
     try:
         return datetime.strptime(data_str.strip(), "%d/%m/%Y")

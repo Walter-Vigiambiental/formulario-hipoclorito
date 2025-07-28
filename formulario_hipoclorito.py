@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+from reportlab.pdfgen import canvas
+from io import BytesIO
+import yagmail
 import os
 
 st.set_page_config(page_title="Formulário Hipoclorito", page_icon="📦", layout="centered")
@@ -8,22 +11,51 @@ st.title("📦 Formulário de Entrega de Hipoclorito")
 
 CSV_FILE = "entregas_hipoclorito.csv"
 
-# Função para carregar entregas previamente salvas
+# Funções auxiliares
+def formatar_data(data):
+    return data.strftime("%d/%m/%Y") if data else ""
+
 def carregar_entregas():
     if os.path.exists(CSV_FILE):
         return pd.read_csv(CSV_FILE).to_dict(orient="records")
     return []
 
-# Função para salvar as entregas atualizadas
 def salvar_entregas(entregas):
     df = pd.DataFrame(entregas)
     df.to_csv(CSV_FILE, index=False)
 
-# Inicializa a lista de entregas
+def gerar_pdf(entrega):
+    buffer = BytesIO()
+    c = canvas.Canvas(buffer)
+    c.setFont("Helvetica", 12)
+    c.drawString(100, 800, "📦 Registro de Entrega de Hipoclorito")
+    y = 760
+    for chave, valor in entrega.items():
+        c.drawString(100, y, f"{chave}: {valor}")
+        y -= 20
+    c.save()
+    buffer.seek(0)
+    return buffer
+
+def enviar_email(destinatario, pdf_buffer):
+    try:
+        yag = yagmail.SMTP("vigiambientalmochipoclorito@gmail.com", "SUA_SENHA_DE_APP")
+        yag.send(
+            to=destinatario,
+            subject="📄 Registro de Entrega - Hipoclorito",
+            contents="Segue em anexo o registro da entrega em PDF.",
+            attachments=[("registro_entrega.pdf", pdf_buffer.read())]
+        )
+        yag.close()
+        return True
+    except Exception as e:
+        st.error(f"Erro ao enviar e-mail: {e}")
+        return False
+
+# Estado inicial
 if "entregas" not in st.session_state:
     st.session_state.entregas = carregar_entregas()
 
-# Lista de localidades
 localidades = [
     "Selecione uma localidade...",
     "Miralta", "Nova Esperança", "Santa Rosa", "Ermidinha",
@@ -31,10 +63,6 @@ localidades = [
     "Canto Engenho", "Santa Barbara", "Planalto Rural",
     "Ponta do Morro", "Sec. Vigilância em Saúde", "Defesa Civil"
 ]
-
-# Função para formatar datas no estilo brasileiro
-def formatar_data(data):
-    return data.strftime("%d/%m/%Y") if data else ""
 
 # Formulário
 with st.form("form_entrega"):
@@ -68,6 +96,8 @@ with st.form("form_entrega"):
     with col10:
         observacoes = st.text_area("Observações")
 
+    email_destino = st.text_input("E-mail para envio do PDF")
+
     enviado = st.form_submit_button("📤 Registrar entrega")
 
     if enviado:
@@ -81,11 +111,16 @@ with st.form("form_entrega"):
             "Saldo Remanescente": int(saldo_remanescente),
             "Vencimento B": formatar_data(vencimento_b),
             "Recebedor": recebedor,
-            "Observações": observacoes
+            "Observações": observacoes,
+            "Email destino": email_destino
         }
+
         st.session_state.entregas.append(entrega)
         salvar_entregas(st.session_state.entregas)
-        st.success("✅ Entrega registrada e salva com sucesso!")
+
+        pdf_buffer = gerar_pdf(entrega)
+        if enviar_email(email_destino, pdf_buffer):
+            st.success("✅ Entrega registrada e PDF enviado por e-mail com sucesso!")
 
 # Histórico
 if st.session_state.entregas:

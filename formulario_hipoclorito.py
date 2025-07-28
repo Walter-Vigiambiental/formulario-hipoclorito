@@ -38,8 +38,8 @@ with st.form("form_entrega"):
         data_entrega = st.date_input("Data de entrega", value=datetime.today(), format="DD/MM/YYYY")
         quant_pactuada = st.number_input("Quant. Pactuada (Caixas)", min_value=0, step=1, format="%d")
         quant_entregue = st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d")
-        vencimento_a = st.date_input("Vencimento", value=datetime.today(), format="DD/MM/YYYY")
-        vencimento_b = st.date_input("Vencimento", value=datetime.today(), format="DD/MM/YYYY")
+        vencimento_a = st.date_input("Vencimento A", value=datetime.today(), format="DD/MM/YYYY")
+        vencimento_b = st.date_input("Vencimento B", value=datetime.today(), format="DD/MM/YYYY")
         saldo_remanescente = st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d")
     with col2:
         entregador = st.text_input("Entregador")
@@ -53,8 +53,8 @@ with st.form("form_entrega"):
             "Data de entrega": formatar_data(data_entrega),
             "Quant. Pactuada": int(quant_pactuada),
             "Quant. Entregue": int(quant_entregue),
-            "Vencimento (1)": formatar_data(vencimento_a),
-            "Vencimento (2)": formatar_data(vencimento_b),
+            "Vencimento A": formatar_data(vencimento_a),
+            "Vencimento B": formatar_data(vencimento_b),
             "Saldo Remanescente": int(saldo_remanescente),
             "Entregador": entregador,
             "Recebedor": recebedor,

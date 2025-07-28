@@ -138,23 +138,26 @@ with st.form("form_entrega"):
     with col3:
         localidade = st.selectbox("Localidade", localidades, key="localidade")
     with col4:
-        data_entrega = st.date_input("Data de entrega", value=None, format="DD/MM/YYYY", key="data_entrega")
+        data_entrega = st.date_input("Data de entrega", key="data_entrega")
     col5, col6 = st.columns(2)
     with col5:
         quant_entregue = st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d", key="quant_entregue")
     with col6:
-        vencimento_a = st.date_input("Vencimento", value=None, format="DD/MM/YYYY", key="vencimento_a")
+        vencimento_a = st.date_input("Vencimento", key="vencimento_a")
     col7, col8 = st.columns(2)
     with col7:
         saldo_remanescente = st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d", key="saldo_remanescente")
     with col8:
-        vencimento_b = st.date_input("Vencimento", value=None, format="DD/MM/YYYY", key="vencimento_b")
+        vencimento_b = st.date_input("Vencimento", key="vencimento_b")
     col9, col10 = st.columns(2)
     with col9:
         recebedor = st.text_input("Recebedor", key="recebedor")
     with col10:
         observacoes = st.text_area("Observações", key="observacoes")
+
+    # ✅ ESSA LINHA É O BOTÃO DE SUBMISSÃO
     enviado = st.form_submit_button("📤 Registrar entrega")
+
 
 if enviado:
     entrega = {

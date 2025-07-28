@@ -81,4 +81,4 @@ else:
     st.info("Nenhuma entrega registrada ainda.")
 
 st.markdown("---")
-st.caption("Desenvolvido por Walter Alves usando Streamlit.")
+st.caption("Desenvolvido por Walter Alves com ❤️ usando Streamlit.")

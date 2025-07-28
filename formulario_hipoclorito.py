@@ -11,6 +11,7 @@ if "entregas" not in st.session_state:
 
 # Lista de localidades
 localidades = [
+    "",  # opção em branco
     "Miralta",
     "Nova Esperança",
     "Santa Rosa",
@@ -74,4 +75,4 @@ else:
     st.info("Nenhuma entrega registrada ainda.")
 
 st.markdown("---")
-st.caption("Desenvolvido com ❤️ usando Streamlit.")
+st.caption("Desenvolvido por Walter Alves usando Streamlit.")

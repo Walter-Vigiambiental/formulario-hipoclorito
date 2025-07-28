@@ -12,24 +12,15 @@ if "entregas" not in st.session_state:
 # Lista de localidades
 localidades = [
     "Selecione uma localidade...",
-    "Miralta",
-    "Nova Esperança",
-    "Santa Rosa",
-    "Ermidinha",
-    "Samambaia",
-    "São Pedro da Garça",
-    "Aparecida Mundo Novo",
-    "Canto Engenho",
-    "Santa Barbara",
-    "Planalto Rural",
-    "Ponta do Morro",
-    "Sec. Vigilância em Saúde",
-    "Defesa Civil"
+    "Miralta", "Nova Esperança", "Santa Rosa", "Ermidinha",
+    "Samambaia", "São Pedro da Garça", "Aparecida Mundo Novo",
+    "Canto Engenho", "Santa Barbara", "Planalto Rural",
+    "Ponta do Morro", "Sec. Vigilância em Saúde", "Defesa Civil"
 ]
 
 # Função para formatar datas no estilo brasileiro
 def formatar_data(data):
-    return data.strftime("%d/%m/%Y")
+    return data.strftime("%d/%m/%Y") if data else ""
 
 # Formulário
 with st.form("form_entrega"):
@@ -45,21 +36,21 @@ with st.form("form_entrega"):
     with col3:
         localidade = st.selectbox("Localidade", localidades)
     with col4:
-        data_entrega = st.date_input("Data de entrega", value=datetime.today(), format="DD/MM/YYYY", key="data_entrega")
+        data_entrega = st.date_input("Data de entrega", value=None, format="DD/MM/YYYY", key="data_entrega")
 
     # Linha 3: Quant. Entregue — Vencimento A
     col5, col6 = st.columns(2)
     with col5:
         quant_entregue = st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d")
     with col6:
-        vencimento_a = st.date_input("Vencimento", value=datetime.today(), format="DD/MM/YYYY", key="vencimento_a")
+        vencimento_a = st.date_input("Vencimento", value=None, format="DD/MM/YYYY", key="vencimento_a")
 
     # Linha 4: Saldo Remanescente — Vencimento B
     col7, col8 = st.columns(2)
     with col7:
         saldo_remanescente = st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d")
     with col8:
-        vencimento_b = st.date_input("Vencimento", value=datetime.today(), format="DD/MM/YYYY", key="vencimento_b")
+        vencimento_b = st.date_input("Vencimento", value=None, format="DD/MM/YYYY", key="vencimento_b")
 
     # Linha 5: Recebedor — Observações
     col9, col10 = st.columns(2)
@@ -69,7 +60,6 @@ with st.form("form_entrega"):
         observacoes = st.text_area("Observações")
 
     enviado = st.form_submit_button("📤 Registrar entrega")
-
     if enviado:
         entrega = {
             "Quant. Pactuada": int(quant_pactuada),

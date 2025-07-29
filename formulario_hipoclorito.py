@@ -1,13 +1,21 @@
 import streamlit as st
 
-# Criar layout com 3 colunas: esquerda, espaço vazio, direita
+st.markdown("""
+<style>
+    .css-18e3th9 {
+        max-width: 1000px;  /* Ajuste conforme quiser */
+    }
+</style>
+""", unsafe_allow_html=True)
+
 col_esq, col_vazio, col_dir = st.columns([2, 6, 2])
 
 with col_esq:
     st.image("logo_hipoclorito2.png", width=120)
 
 with col_dir:
-    st.image("logo_hipoclorito3.png", width=180)
+    st.image("logo_hipoclorito3.png", width=160)
+
 
 import pandas as pd
 from datetime import datetime

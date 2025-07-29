@@ -1,5 +1,4 @@
 import streamlit as st
-
 st.markdown(
     """
     <div style="text-align: center;">
@@ -8,7 +7,6 @@ st.markdown(
     </div>
     """,
     unsafe_allow_html=True
-)
 import pandas as pd
 from datetime import datetime
 from reportlab.pdfgen import canvas

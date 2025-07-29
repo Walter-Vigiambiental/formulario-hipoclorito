@@ -2,7 +2,7 @@ import streamlit as st
 
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
-    st.image("logo_hipoclorito1.png", width=150, caption="Vigilância Ambiental - Montes Claros")
+    st.image("logo_hipoclorito1.png, logo_hipoclorito2.png", width=150, caption="Vigilância Ambiental - Montes Claros")
 
 import pandas as pd
 from datetime import datetime

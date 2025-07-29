@@ -1,13 +1,13 @@
 import streamlit as st
 
-# Criar duas colunas com o mesmo tamanho
-col1, col2 = st.columns(2)
+# Criar layout com 3 colunas: esquerda, espaço vazio, direita
+col_esq, col_vazio, col_dir = st.columns([2, 6, 2])
 
-with col1:
-    st.image("logo_hipoclorito2.png", width=100)
+with col_esq:
+    st.image("logo_hipoclorito2.png", width=120)
 
-with col2:
-    st.image("logo_hipoclorito3.png", width=100)
+with col_dir:
+    st.image("logo_hipoclorito3.png", width=120)
 
 import pandas as pd
 from datetime import datetime

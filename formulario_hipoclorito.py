@@ -7,7 +7,21 @@ from io import BytesIO
 import yagmail
 import os
 
+# Configuração da página
 st.set_page_config(page_title="Formulário Hipoclorito", page_icon="📦", layout="centered")
+
+# 👑 Logo com estilo centralizado e legenda elegante
+st.markdown(
+    """
+    <div style="text-align: center;">
+        <img src="logo_hipoclorito.png" width="150" style="border-radius: 15px;">
+        <p style="font-size:18px; margin-top:5px; color:#4F4F4F;">Vigilância Ambiental - Montes Claros</p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# Título do formulário
 st.title("📦 Formulário de Entrega de Hipoclorito")
 
 CSV_FILE = "entregas_hipoclorito.csv"

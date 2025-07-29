@@ -1,4 +1,8 @@
 import streamlit as st
+# 👑 Exibir logo e legenda centralizada
+st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+st.image("logo_hipoclorito.png", width=150)
+st.markdown("<p style='text-align: center; font-size:18px; color:#4F4F4F;'>Vigilância Ambiental - Montes Claros</p></div>", unsafe_allow_html=True)
 import pandas as pd
 from datetime import datetime
 from reportlab.pdfgen import canvas

@@ -3,15 +3,7 @@ import streamlit as st
 col1, col2, col3 = st.columns([1, 2, 1])
 
 with col2:
-    st.image("logo_hipoclorito3.png", width=400)
-    st.markdown(
-        """
-        <div style="text-align: center; margin-top: -15px;">
-            <p style="font-size:16px; color:#4F4F4F;">Vigilância Ambiental - Montes Claros</p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.image("logo_hipoclorito.png", width=400)
 
 import pandas as pd
 from datetime import datetime

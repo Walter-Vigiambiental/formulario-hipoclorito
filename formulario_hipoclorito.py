@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.image("logo_hipoclorito3.png", width=300)
+st.image("logo_hipoclorito4.png", width=300)
 
 import pandas as pd
 from datetime import datetime

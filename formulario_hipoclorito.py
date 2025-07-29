@@ -7,7 +7,7 @@ with col_esq:
     st.image("logo_hipoclorito2.png", width=120)
 
 with col_dir:
-    st.image("logo_hipoclorito3.png", width=120)
+    st.image("logo_hipoclorito3.png", width=200)
 
 import pandas as pd
 from datetime import datetime

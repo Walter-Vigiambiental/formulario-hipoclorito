@@ -8,7 +8,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-col_esq, col_vazio, col_dir = st.columns([2, 6, 2])
+col_esq, col_vazio, col_dir = st.columns([1, 8, 1])
 
 with col_esq:
     st.image("logo_hipoclorito2.png", width=100)

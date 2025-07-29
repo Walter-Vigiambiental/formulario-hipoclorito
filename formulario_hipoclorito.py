@@ -1,21 +1,6 @@
 import streamlit as st
 
-st.markdown("""
-<style>
-    .css-18e3th9 {
-        max-width: 500px;  /* Ajuste conforme quiser */
-    }
-</style>
-""", unsafe_allow_html=True)
-
-col_esq, col_vazio, col_dir = st.columns([1, 8, 1])
-
-with col_esq:
-    st.image("logo_hipoclorito2.png", width=80)
-
-with col_dir:
-    st.image("logo_hipoclorito3.png", width=80)
-
+st.image("logo_hipoclorito3.png", width=300)
 
 import pandas as pd
 from datetime import datetime

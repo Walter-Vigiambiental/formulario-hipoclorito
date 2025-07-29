@@ -3,7 +3,7 @@ import streamlit as st
 st.markdown("""
 <style>
     .css-18e3th9 {
-        max-width: 1000px;  /* Ajuste conforme quiser */
+        max-width: 800px;  /* Ajuste conforme quiser */
     }
 </style>
 """, unsafe_allow_html=True)

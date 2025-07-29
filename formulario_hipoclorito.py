@@ -1,11 +1,15 @@
 import streamlit as st
 
-# Criar três colunas para centralizar a imagem
 col1, col2, col3 = st.columns([1, 2, 1])
+
 with col2:
     st.image("logo_hipoclorito.png", width=200)
     st.markdown(
-        "<p style='text-align: center; font-size:16px; color:#4F4F4F; margin-top: -10px;'>Vigilância Ambiental - Montes Claros</p>",
+        """
+        <div style="text-align: center; margin-top: -15px;">
+            <p style="font-size:16px; color:#4F4F4F;">Vigilância Ambiental - Montes Claros</p>
+        </div>
+        """,
         unsafe_allow_html=True
     )
 

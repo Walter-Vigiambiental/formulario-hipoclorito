@@ -14,7 +14,7 @@ with col_esq:
     st.image("logo_hipoclorito2.png", width=120)
 
 with col_dir:
-    st.image("logo_hipoclorito3.png", width=160)
+    st.image("logo_hipoclorito3.png", width=120)
 
 
 import pandas as pd

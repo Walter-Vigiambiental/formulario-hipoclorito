@@ -1,8 +1,13 @@
 import streamlit as st
 
+# Criar três colunas para centralizar a imagem
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
-    st.image("logo_hipoclorito1.png", width=200, caption="Vigilância Ambiental - Montes Claros")
+    st.image("logo_hipoclorito.png", width=200)
+    st.markdown(
+        "<p style='text-align: center; font-size:16px; color:#4F4F4F; margin-top: -10px;'>Vigilância Ambiental - Montes Claros</p>",
+        unsafe_allow_html=True
+    )
 
 import pandas as pd
 from datetime import datetime

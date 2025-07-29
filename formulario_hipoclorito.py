@@ -193,7 +193,7 @@ if st.session_state.entregas:
         mime="application/pdf"
     )
 
-        st.subheader("🗑️ Gerenciar Lançamentos")
+st.subheader("🗑️ Gerenciar Lançamentos")
 
 for i, entrega in enumerate(st.session_state.entregas):
     with st.expander(f"Entrega {i + 1} - {entrega.get('Localidade', 'Sem local')}"):

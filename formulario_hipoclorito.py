@@ -11,10 +11,10 @@ st.markdown("""
 col_esq, col_vazio, col_dir = st.columns([2, 6, 2])
 
 with col_esq:
-    st.image("logo_hipoclorito2.png", width=120)
+    st.image("logo_hipoclorito2.png", width=100)
 
 with col_dir:
-    st.image("logo_hipoclorito3.png", width=120)
+    st.image("logo_hipoclorito3.png", width=100)
 
 
 import pandas as pd

@@ -1,12 +1,13 @@
 import streamlit as st
 st.markdown(
     """
-    <div style="text-align: center;">
-        <img src="logo_hipoclorito.png" width="150" style="border-radius: 15px; display: block; margin-left: auto; margin-right: auto;">
-        <p style="font-size:18px; margin-top:5px; color:#4F4F4F;">Vigilância Ambiental - Montes Claros</p>
+<div style="text-align: center;">
+<img src="logo_hipoclorito.png" width="150" style="border-radius: 15px; display: block; margin-left: auto; margin-right: auto;">
+<p style="font-size:18px; margin-top:5px; color:#4F4F4F;">Vigilância Ambiental - Montes Claros</p>
     </div>
     """,
     unsafe_allow_html=True
+)
 import pandas as pd
 from datetime import datetime
 from reportlab.pdfgen import canvas

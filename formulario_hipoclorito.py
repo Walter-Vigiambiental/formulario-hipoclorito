@@ -3,7 +3,7 @@ import streamlit as st
 col1, col2, col3 = st.columns([1, 2, 1])
 
 with col2:
-    st.image("logo_hipoclorito.png", width=200)
+    st.image("logo_hipoclorito.png", width=150)
     st.markdown(
         """
         <div style="text-align: center; margin-top: -15px;">

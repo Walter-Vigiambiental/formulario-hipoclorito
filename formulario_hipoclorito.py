@@ -163,6 +163,9 @@ with st.form("form_entrega"):
 
     if enviado:
         erro_vencimento = False
+        if not st.session_state.data_entrega:
+            erro = True
+            st.error("❌ O campo 'Data de entrega' é obrigatório.")
         if st.session_state.quant_entregue > 0 and not st.session_state.vencimento_a:
             erro_vencimento = True
             st.error("❌ Campo 'Vencimento A' é obrigatório quando houver entrega.")

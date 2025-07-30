@@ -154,10 +154,10 @@ with st.form("form_entrega"):
         st.date_input("Vencimento B", format="DD/MM/YYYY", key="vencimento_b")
 
     col9, col10 = st.columns(2)
-with col9:
+    with col9:
     st.text_input("Recebedor", key="recebedor")
 
-st.text_area("Observações", key="observacoes")
+    st.text_area("Observações", key="observacoes")
 
     with col10:
         st.text_area("Observações", key="observacoes")

@@ -1,7 +1,5 @@
 import streamlit as st
-
 st.image("logo_hipoclorito4.png", width=400)
-
 import pandas as pd
 from datetime import datetime
 from reportlab.pdfgen import canvas
@@ -12,9 +10,6 @@ import os
 
 # Configuração da página
 st.set_page_config(page_title="Formulário Hipoclorito", page_icon="📦", layout="centered")
-
-
-# Título do formulário
 st.title("📦 Formulário de Entrega de Hipoclorito")
 
 CSV_FILE = "entregas_hipoclorito.csv"
@@ -50,8 +45,7 @@ def carregar_entregas():
     return []
 
 def salvar_entregas(entregas):
-    df = pd.DataFrame(entregas)
-    df.to_csv(CSV_FILE, index=False)
+    pd.DataFrame(entregas).to_csv(CSV_FILE, index=False)
 
 def gerar_pdf(entrega):
     buffer = BytesIO()
@@ -78,21 +72,19 @@ def gerar_pdf_historico(entregas):
         c.drawString(80, y, f"Entrega {i}")
         y -= 15
         c.setFont("Helvetica", 11)
-        pares_de_campos = [
+        for campo1, campo2 in [
             ("Quant. Pactuada", "Entregador"),
             ("Localidade", "Data de entrega"),
             ("Quant. Entregue", "Vencimento A"),
             ("Saldo Remanescente", "Vencimento B"),
             ("Recebedor", "Observações"),
-        ]
-        for campo1, campo2 in pares_de_campos:
-            valor1 = "" if pd.isna(entrega.get(campo1)) else str(entrega.get(campo1))
-            valor2 = "" if pd.isna(entrega.get(campo2)) else str(entrega.get(campo2))
+        ]:
+            valor1 = entrega.get(campo1, "")
+            valor2 = entrega.get(campo2, "")
             c.drawString(80, y, f"{campo1}: {valor1}")
             c.drawString(300, y, f"{campo2}: {valor2}")
             y -= 15
-        email_destino = "" if pd.isna(entrega.get("Email destino")) else str(entrega.get("Email destino"))
-        c.drawString(80, y, f"Email destino: {email_destino}")
+        c.drawString(80, y, f"Email destino: {entrega.get('Email destino', '')}")
         y -= 25
         if y < 100:
             c.showPage()
@@ -143,21 +135,25 @@ with st.form("form_entrega"):
         st.number_input("Quant. Pactuada (Caixas)", min_value=0, step=1, format="%d", key="quant_pactuada")
     with col2:
         st.text_input("Entregador", key="entregador")
+    
     col3, col4 = st.columns(2)
     with col3:
         st.selectbox("Localidade", localidades, key="localidade")
     with col4:
         st.date_input("Data de entrega", format="DD/MM/YYYY", key="data_entrega")
+    
     col5, col6 = st.columns(2)
     with col5:
         st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d", key="quant_entregue")
     with col6:
-        st.date_input("Vencimento", format="DD/MM/YYYY", key="vencimento_a")
+        st.date_input("Vencimento A", format="DD/MM/YYYY", key="vencimento_a")
+    
     col7, col8 = st.columns(2)
     with col7:
         st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d", key="saldo_remanescente")
     with col8:
-        st.date_input("Vencimento", format="DD/MM/YYYY", key="vencimento_b")
+        st.date_input("Vencimento B", format="DD/MM/YYYY", key="vencimento_b")
+
     col9, col10 = st.columns(2)
     with col9:
         st.text_input("Recebedor", key="recebedor")
@@ -166,42 +162,32 @@ with st.form("form_entrega"):
 
     enviado = st.form_submit_button("📤 Registrar entrega")
 
-if enviado:
-    entrega = {
-        "Quant. Pactuada": int(st.session_state.quant_pactuada),
-        "Entregador": st.session_state.entregador,
-        "Localidade": st.session_state.localidade,
-        "Data de entrega": formatar_data(st.session_state.data_entrega),
-        "Quant. Entregue": int(st.session_state.quant_entregue),
-        "Vencimento A": formatar_data(st.session_state.vencimento_a),
-        "Saldo Remanescente": int(st.session_state.saldo_remanescente),
-        "Vencimento B": formatar_data(st.session_state.vencimento_b),
-        "Recebedor": st.session_state.recebedor,
-        "Observações": st.session_state.observacoes,
-        "Email destino": EMAIL_DESTINO_FIXO
-    }
-
-    st.session_state.entregas.append(entrega)
-    salvar_entregas(st.session_state.entregas)
-    pdf_buffer = gerar_pdf(entrega)
-    if enviar_email(EMAIL_DESTINO_FIXO, pdf_buffer):
-        st.success("✅ Entrega registrada e PDF enviado automaticamente para o e-mail do sistema!")
-
-if st.session_state.entregas:
-    st.subheader("📄 Histórico de Entregas")
-    df = pd.DataFrame(st.session_state.entregas)
-    st.dataframe(df, use_container_width=True)
-
-    pdf_historico = gerar_pdf_historico(st.session_state.entregas)
-    st.download_button(
-        label="📥 Exportar Histórico em PDF",
-        data=pdf_historico,
-        file_name="historico_entregas_hipoclorito.pdf",
-        mime="application/pdf"
-    )
+    if enviado:
+        erro_vencimento = False
+        if st.session_state.quant_entregue > 0 and not st.session_state.vencimento_a:
+            erro_vencimento = True
+            st.error("❌ Campo 'Vencimento A' é obrigatório quando houver entrega.")
+        if st.session_state.saldo_remanescente > 0 and not st.session_state.vencimento_b:
+            erro_vencimento = True
+            st.error("❌ Campo 'Vencimento B' é obrigatório quando houver saldo remanescente.")
+        
+        if not erro_vencimento:
+            entrega = {
+                "Quant. Pactuada": int(st.session_state.quant_pactuada),
+                "Entregador": st.session_state.entregador,
+                "Localidade": st.session_state.localidade,
+                "Data de entrega": formatar_data(st.session_state.data_entrega),
+                "Quant. Entregue": int(st.session_state.quant_entregue),
+                "Vencimento A": formatar_data(st.session_state.vencimento_a),
+         pdf_historico = gerar_pdf_historico(st.session_state.entregas)
+        st.download_button(
+            label="📥 Exportar Histórico em PDF",
+            data=pdf_historico,
+            file_name="historico_entregas_hipoclorito.pdf",
+            mime="application/pdf"
+        )
 
 st.subheader("🗑️ Gerenciar Lançamentos")
-
 if st.session_state.entregas:
     for i, entrega in enumerate(st.session_state.entregas):
         with st.expander(f"Entrega {i + 1} - {entrega.get('Localidade', 'Sem local')}"):
@@ -225,6 +211,5 @@ else:
     st.info("Nenhuma entrega registrada ainda.")
 
 st.markdown("---")
-st.caption("Desenvolvido por Walter Alves usando Streamlit.")
-
+st.caption("Desenvolvido por Walter Alves usando Streamlit.")              
 

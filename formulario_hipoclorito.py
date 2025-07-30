@@ -59,41 +59,6 @@ def gerar_pdf(entrega):
     buffer.seek(0)
     return buffer
 
-def gerar_pdf_historico(entregas):
-    buffer = BytesIO()
-    c = canvas.Canvas(buffer, pagesize=A4)
-    largura, altura = A4
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(80, altura - 50, "📋 Histórico de Entregas de Hipoclorito")
-    y = altura - 80
-    for i, entrega in enumerate(entregas, start=1):
-        c.setFont("Helvetica-Bold", 12)
-        c.drawString(80, y, f"Entrega {i}")
-        y -= 15
-        c.setFont("Helvetica", 11)
-        for campo1, campo2 in [
-            ("Quant. Pactuada", "Entregador"),
-            ("Localidade", "Data de entrega"),
-            ("Quant. Entregue", "Vencimento A"),
-            ("Saldo Remanescente", "Vencimento B"),
-            ("Recebedor", "Observações"),
-        ]:
-            valor1 = entrega.get(campo1, "")
-            valor2 = entrega.get(campo2, "")
-            c.drawString(80, y, f"{campo1}: {valor1}")
-            c.drawString(300, y, f"{campo2}: {valor2}")
-            y -= 15
-        c.drawString(80, y, f"Email destino: {entrega.get('Email destino', '')}")
-        y -= 25
-        if y < 100:
-            c.showPage()
-            c.setFont("Helvetica-Bold", 14)
-            c.drawString(80, altura - 50, "📋 Histórico de Entregas de Hipoclorito (continuação)")
-            y = altura - 80
-    c.save()
-    buffer.seek(0)
-    return buffer
-
 def enviar_email(destinatario, pdf_buffer):
     try:
         yag = yagmail.SMTP("vigiambientalmochipoclorito@gmail.com", "reyzteerwjszvnsl")
@@ -153,27 +118,27 @@ with st.form("form_entrega"):
     with col8:
         st.date_input("Vencimento", format="DD/MM/YYYY", key="vencimento_b")
 
-    col9, col10 = st.columns(2)
-    with col9:
-        st.text_input("Recebedor", key="recebedor")
-    with col10:
-        st.text_area("Observações", key="observacoes")
+    st.text_input("Recebedor", key="recebedor")
+    st.text_area("Observações", key="observacoes")
 
     enviado = st.form_submit_button("📤 Registrar entrega")
 
     if enviado:
-        erro_vencimento = False
+        erro = False
+
         if not st.session_state.data_entrega:
             erro = True
             st.error("❌ O campo 'Data de entrega' é obrigatório.")
+
         if st.session_state.quant_entregue > 0 and not st.session_state.vencimento_a:
-            erro_vencimento = True
+            erro = True
             st.error("❌ Campo 'Vencimento' é obrigatório quando houver entrega.")
+
         if st.session_state.saldo_remanescente > 0 and not st.session_state.vencimento_b:
-            erro_vencimento = True
+            erro = True
             st.error("❌ Campo 'Vencimento' é obrigatório quando houver saldo remanescente.")
 
-        if not erro_vencimento:
+        if not erro:
             entrega = {
                 "Quant. Pactuada": int(st.session_state.quant_pactuada),
                 "Entregador": st.session_state.entregador,
@@ -195,38 +160,3 @@ with st.form("form_entrega"):
                 st.success("✅ Entrega registrada e e-mail enviado com sucesso!")
             else:
                 st.warning("⚠️ Entrega registrada, mas falha ao enviar o e-mail.")
-
-st.subheader("🗑️ Gerenciar Lançamentos")
-if st.session_state.entregas:
-    for i, entrega in enumerate(st.session_state.entregas):
-        with st.expander(f"Entrega {i + 1} - {entrega.get('Localidade', 'Sem local')}"):
-            col1, col2 = st.columns([3, 1])
-            with col1:
-                for chave, valor in entrega.items():
-                    valor_formatado = "" if pd.isna(valor) else str(valor)
-                    st.markdown(f"**{chave}:** {valor_formatado}")
-            with col2:
-                if st.button(f"🗑️ Excluir", key=f"del_{i}"):
-                    senha = st.text_input("Digite a senha", type="password", key=f"senha_{i}")
-                    if senha:
-                        if senha == SENHA_EXCLUSAO:
-                            st.session_state.entregas.pop(i)
-                            salvar_entregas(st.session_state.entregas)
-                            st.success("✅ Lançamento excluído com sucesso!")
-                            st.rerun()
-                        else:
-                            st.error("❌ Senha incorreta.")
-else:
-    st.info("Nenhuma entrega registrada ainda.")
-
-st.subheader("📤 Exportar Histórico de Entregas")
-pdf_historico = gerar_pdf_historico(st.session_state.entregas)
-st.download_button(
-    label="📥 Exportar Histórico em PDF",
-    data=pdf_historico,
-    file_name="historico_entregas_hipoclorito.pdf",
-    mime="application/pdf"
-)
-
-st.markdown("---")
-st.caption("Desenvolvido por Walter Alves usando Streamlit.")

@@ -1,5 +1,4 @@
 import streamlit as st
-st.image("logo_hipoclorito4.png", width=400)
 import pandas as pd
 from datetime import datetime
 from reportlab.pdfgen import canvas
@@ -135,19 +134,19 @@ with st.form("form_entrega"):
         st.number_input("Quant. Pactuada (Caixas)", min_value=0, step=1, format="%d", key="quant_pactuada")
     with col2:
         st.text_input("Entregador", key="entregador")
-    
+
     col3, col4 = st.columns(2)
     with col3:
         st.selectbox("Localidade", localidades, key="localidade")
     with col4:
         st.date_input("Data de entrega", format="DD/MM/YYYY", key="data_entrega")
-    
+
     col5, col6 = st.columns(2)
     with col5:
         st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d", key="quant_entregue")
     with col6:
         st.date_input("Vencimento A", format="DD/MM/YYYY", key="vencimento_a")
-    
+
     col7, col8 = st.columns(2)
     with col7:
         st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d", key="saldo_remanescente")
@@ -170,7 +169,7 @@ with st.form("form_entrega"):
         if st.session_state.saldo_remanescente > 0 and not st.session_state.vencimento_b:
             erro_vencimento = True
             st.error("❌ Campo 'Vencimento B' é obrigatório quando houver saldo remanescente.")
-        
+
         if not erro_vencimento:
             entrega = {
                 "Quant. Pactuada": int(st.session_state.quant_pactuada),
@@ -179,13 +178,20 @@ with st.form("form_entrega"):
                 "Data de entrega": formatar_data(st.session_state.data_entrega),
                 "Quant. Entregue": int(st.session_state.quant_entregue),
                 "Vencimento A": formatar_data(st.session_state.vencimento_a),
-         pdf_historico = gerar_pdf_historico(st.session_state.entregas)
-        st.download_button(
-            label="📥 Exportar Histórico em PDF",
-            data=pdf_historico,
-            file_name="historico_entregas_hipoclorito.pdf",
-            mime="application/pdf"
-        )
+                "Saldo Remanescente": int(st.session_state.saldo_remanescente),
+                "Vencimento B": formatar_data(st.session_state.vencimento_b),
+                "Recebedor": st.session_state.recebedor,
+                "Observações": st.session_state.observacoes,
+                "Email destino": EMAIL_DESTINO_FIXO
+            }
+            st.session_state.entregas.append(entrega)
+            salvar_entregas(st.session_state.entregas)
+            buffer_pdf = gerar_pdf(entrega)
+            enviado_ok = enviar_email(EMAIL_DESTINO_FIXO, buffer_pdf)
+            if enviado_ok:
+                st.success("✅ Entrega registrada e e-mail enviado com sucesso!")
+            else:
+                st.warning("⚠️ Entrega registrada, mas falha ao enviar o e-mail.")
 
 st.subheader("🗑️ Gerenciar Lançamentos")
 if st.session_state.entregas:
@@ -210,6 +216,14 @@ if st.session_state.entregas:
 else:
     st.info("Nenhuma entrega registrada ainda.")
 
-st.markdown("---")
-st.caption("Desenvolvido por Walter Alves usando Streamlit.")              
+st.subheader("📤 Exportar Histórico de Entregas")
+pdf_historico = gerar_pdf_historico(st.session_state.entregas)
+st.download_button(
+    label="📥 Exportar Histórico em PDF",
+    data=pdf_historico,
+    file_name="historico_entregas_hipoclorito.pdf",
+    mime="application/pdf"
+)
 
+st.markdown("---")
+st.caption("Desenvolvido por Walter Alves usando Streamlit.")

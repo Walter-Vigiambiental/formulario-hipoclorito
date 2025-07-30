@@ -153,14 +153,14 @@ with st.form("form_entrega"):
     with col8:
         st.date_input("Vencimento B", format="DD/MM/YYYY", key="vencimento_b")
 
-    col9, col10 = st.columns(2)
+    # Aqui corrige a indentação dos campos Recebedor e Observações
+    col9, _ = st.columns([1, 1])
     with col9:
-    st.text_input("Recebedor", key="recebedor")
+        st.text_input("Recebedor", key="recebedor")
 
     st.text_area("Observações", key="observacoes")
 
-    with col10:
-        st.text_area("Observações", key="observacoes")
+    enviado = st.form_submit_button("📤 Registrar entrega")
 
     enviado = st.form_submit_button("📤 Registrar entrega")
 

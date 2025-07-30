@@ -154,21 +154,35 @@ with st.form("form_entrega"):
         st.date_input("Vencimento B", format="DD/MM/YYYY", key="vencimento_b")
 
     col9, col10 = st.columns(2)
-    with col9:
-        st.text_input("Recebedor", key="recebedor")
+with col9:
+    st.text_input("Recebedor", key="recebedor")
+
+st.text_area("Observações", key="observacoes")
+
     with col10:
         st.text_area("Observações", key="observacoes")
 
     enviado = st.form_submit_button("📤 Registrar entrega")
 
     if enviado:
-        erro_vencimento = False
-        if st.session_state.quant_entregue > 0 and not st.session_state.vencimento_a:
-            erro_vencimento = True
-            st.error("❌ Campo 'Vencimento A' é obrigatório quando houver entrega.")
-        if st.session_state.saldo_remanescente > 0 and not st.session_state.vencimento_b:
-            erro_vencimento = True
-            st.error("❌ Campo 'Vencimento B' é obrigatório quando houver saldo remanescente.")
+        erro = False
+
+if not st.session_state.data_entrega:
+    erro = True
+    st.error("❌ O campo 'Data de entrega' é obrigatório.")
+
+# Vencimento A obrigatório se houver entrega
+if st.session_state.quant_entregue > 0 and not st.session_state.vencimento_a:
+    erro = True
+    st.error("❌ Campo 'Vencimento A' é obrigatório quando houver entrega.")
+
+# Vencimento B obrigatório se houver saldo remanescente
+if st.session_state.saldo_remanescente > 0 and not st.session_state.vencimento_b:
+    erro = True
+    st.error("❌ Campo 'Vencimento B' é obrigatório quando houver saldo remanescente.")
+
+if not erro:
+    # prossegue com o registro
 
         if not erro_vencimento:
             entrega = {

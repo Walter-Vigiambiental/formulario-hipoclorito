@@ -145,13 +145,13 @@ with st.form("form_entrega"):
     with col5:
         st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d", key="quant_entregue")
     with col6:
-        st.date_input("Vencimento A", format="DD/MM/YYYY", key="vencimento_a")
+        st.date_input("Vencimento", format="DD/MM/YYYY", key="vencimento_a")
 
     col7, col8 = st.columns(2)
     with col7:
         st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d", key="saldo_remanescente")
     with col8:
-        st.date_input("Vencimento B", format="DD/MM/YYYY", key="vencimento_b")
+        st.date_input("Vencimento", format="DD/MM/YYYY", key="vencimento_b")
 
     col9, col10 = st.columns(2)
     with col9:
@@ -168,10 +168,10 @@ with st.form("form_entrega"):
             st.error("❌ O campo 'Data de entrega' é obrigatório.")
         if st.session_state.quant_entregue > 0 and not st.session_state.vencimento_a:
             erro_vencimento = True
-            st.error("❌ Campo 'Vencimento A' é obrigatório quando houver entrega.")
+            st.error("❌ Campo 'Vencimento' é obrigatório quando houver entrega.")
         if st.session_state.saldo_remanescente > 0 and not st.session_state.vencimento_b:
             erro_vencimento = True
-            st.error("❌ Campo 'Vencimento B' é obrigatório quando houver saldo remanescente.")
+            st.error("❌ Campo 'Vencimento' é obrigatório quando houver saldo remanescente.")
 
         if not erro_vencimento:
             entrega = {

@@ -6,6 +6,7 @@ from reportlab.lib.pagesizes import A4
 from io import BytesIO
 import yagmail
 import os
+import socket
 
 # Configuração da página
 st.set_page_config(page_title="Formulário Hipoclorito", page_icon="📦", layout="centered")
@@ -25,12 +26,20 @@ campos_formulario = {
     "saldo_remanescente": 0,
     "vencimento_b": None,
     "recebedor": "",
-    "observacoes": ""
+    "observacoes": "",
+    "enviado": False
 }
 
 for campo, valor in campos_formulario.items():
     if campo not in st.session_state:
         st.session_state[campo] = valor
+
+def tem_conexao():
+    try:
+        socket.create_connection(("8.8.8.8", 53), timeout=3)
+        return True
+    except OSError:
+        return False
 
 def formatar_data(data):
     return data.strftime("%d/%m/%Y") if data else ""
@@ -53,8 +62,9 @@ def gerar_pdf(entrega):
     c.drawString(100, 800, "📦 Registro de Entrega de Hipoclorito")
     y = 760
     for chave, valor in entrega.items():
-        c.drawString(100, y, f"{chave}: {valor}")
-        y -= 20
+        if chave != "enviado":
+            c.drawString(100, y, f"{chave}: {valor}")
+            y -= 20
     c.save()
     buffer.seek(0)
     return buffer
@@ -79,6 +89,19 @@ def enviar_email(destinatario, pdf_buffer):
 
 if "entregas" not in st.session_state:
     st.session_state.entregas = carregar_entregas()
+
+# Envio automático de pendentes
+if tem_conexao():
+    atualizou = False
+    for entrega in st.session_state.entregas:
+        if not entrega.get("enviado"):
+            buffer_pdf = gerar_pdf(entrega)
+            enviado_ok = enviar_email(entrega["Email destino"], buffer_pdf)
+            if enviado_ok:
+                entrega["enviado"] = True
+                atualizou = True
+    if atualizou:
+        salvar_entregas(st.session_state.entregas)
 
 if st.button("➕ Inserir Novo Lançamento"):
     for campo, valor in campos_formulario.items():
@@ -150,13 +173,9 @@ with st.form("form_entrega"):
                 "Vencimento B": formatar_data(st.session_state.vencimento_b),
                 "Recebedor": st.session_state.recebedor,
                 "Observações": st.session_state.observacoes,
-                "Email destino": EMAIL_DESTINO_FIXO
+                "Email destino": EMAIL_DESTINO_FIXO,
+                "enviado": False
             }
             st.session_state.entregas.append(entrega)
             salvar_entregas(st.session_state.entregas)
-            buffer_pdf = gerar_pdf(entrega)
-            enviado_ok = enviar_email(EMAIL_DESTINO_FIXO, buffer_pdf)
-            if enviado_ok:
-                st.success("✅ Entrega registrada e e-mail enviado com sucesso!")
-            else:
-                st.warning("⚠️ Entrega registrada, mas falha ao enviar o e-mail.")
+            st.success("✅ Entrega registrada localmente. Será enviada por e-mail quando houver internet.")

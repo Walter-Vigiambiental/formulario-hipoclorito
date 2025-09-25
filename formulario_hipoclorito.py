@@ -13,7 +13,7 @@ st.set_page_config(page_title="Formulário Hipoclorito", page_icon="📦", layou
 
 CSV_FILE = "entregas_hipoclorito.csv"
 EMAIL_DESTINO_FIXO = "vigiambientalmochipoclorito@gmail.com"
-SENHA_EXCLUSAO = "hipoclorito2025"
+SENHA_EXCLUSAO = "hipo123"
 
 campos_formulario = {
     "quant_pactuada": 0,
@@ -103,7 +103,7 @@ if tem_conexao():
         salvar_entregas(st.session_state.entregas)
 
 # Criação das abas
-aba_lancamento, aba_registros = st.tabs(["➕ Lançamentos", "📋 Registros"])
+aba_lancamento, aba_registros = st.tabs(["➕ Lançamento", "📋 Registros"])
 
 # Aba de lançamentos
 with aba_lancamento:
@@ -193,8 +193,24 @@ with aba_registros:
     if st.session_state.entregas:
         df = pd.DataFrame(st.session_state.entregas)
         st.dataframe(df, use_container_width=True)
+
+        st.markdown("### 🗑️ Excluir registros")
+        with st.expander("Clique para excluir um registro"):
+            opcoes = [f"{i+1} - {entrega['Localidade']} ({entrega['Data de entrega']})" for i, entrega in enumerate(st.session_state.entregas)]
+            indice = st.selectbox("Selecione o registro para excluir", options=range(len(opcoes)), format_func=lambda x: opcoes[x])
+            senha = st.text_input("Digite a senha para excluir", type="password")
+            if st.button("Excluir registro"):
+                if senha == SENHA_EXCLUSAO:
+                    st.session_state.entregas.pop(indice)
+                    salvar_entregas(st.session_state.entregas)
+                    st.success("✅ Registro excluído com sucesso.")
+                    st.rerun()
+                else:
+                    st.error("❌ Senha incorreta. Exclusão não autorizada.")
     else:
         st.info("Nenhum registro disponível.")
+
+
 
 
 

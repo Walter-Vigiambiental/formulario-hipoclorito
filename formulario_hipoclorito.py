@@ -10,7 +10,6 @@ import socket
 
 # Configuração da página
 st.set_page_config(page_title="Formulário Hipoclorito", page_icon="📦", layout="centered")
-st.title("📦 Formulário de Entrega de Hipoclorito")
 
 CSV_FILE = "entregas_hipoclorito.csv"
 EMAIL_DESTINO_FIXO = "vigiambientalmochipoclorito@gmail.com"
@@ -103,79 +102,99 @@ if tem_conexao():
     if atualizou:
         salvar_entregas(st.session_state.entregas)
 
-if st.button("➕ Inserir Novo Lançamento"):
-    for campo, valor in campos_formulario.items():
-        st.session_state[campo] = valor
-    st.rerun()
+# Criação das abas
+aba_lancamento, aba_registros = st.tabs(["➕ Lançamento", "📋 Registros"])
 
-localidades = [
-    "Selecione uma localidade...",
-    "Miralta", "Nova Esperança", "Santa Rosa", "Ermidinha",
-    "Samambaia", "São Pedro da Garça", "Aparecida Mundo Novo",
-    "Canto Engenho", "Santa Barbara", "Planalto Rural",
-    "Ponta do Morro", "Sec. Vigilância em Saúde", "Defesa Civil"
-]
+# Aba de lançamentos
+with aba_lancamento:
+    st.title("📦 Formulário de Entrega de Hipoclorito")
 
-with st.form("form_entrega"):
-    col1, col2 = st.columns(2)
-    with col1:
-        st.number_input("Quant. Pactuada (Caixas)", min_value=0, step=1, format="%d", key="quant_pactuada")
-    with col2:
-        st.text_input("Entregador", key="entregador")
+    if st.button("➕ Inserir Novo Lançamento"):
+        for campo, valor in campos_formulario.items():
+            st.session_state[campo] = valor
+        st.rerun()
 
-    col3, col4 = st.columns(2)
-    with col3:
-        st.selectbox("Localidade", localidades, key="localidade")
-    with col4:
-        st.date_input("Data de entrega", format="DD/MM/YYYY", key="data_entrega")
+    localidades = [
+        "Selecione uma localidade...",
+        "Miralta", "Nova Esperança", "Santa Rosa", "Ermidinha",
+        "Samambaia", "São Pedro da Garça", "Aparecida Mundo Novo",
+        "Canto Engenho", "Santa Barbara", "Planalto Rural",
+        "Ponta do Morro", "Sec. Vigilância em Saúde", "Defesa Civil"
+    ]
 
-    col5, col6 = st.columns(2)
-    with col5:
-        st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d", key="quant_entregue")
-    with col6:
-        st.date_input("Vencimento", format="DD/MM/YYYY", key="vencimento_a")
+    with st.form("form_entrega"):
+        col1, col2 = st.columns(2)
+        with col1:
+            st.number_input("Quant. Pactuada (Caixas)", min_value=0, step=1, format="%d", key="quant_pactuada")
+        with col2:
+            st.text_input("Entregador", key="entregador")
 
-    col7, col8 = st.columns(2)
-    with col7:
-        st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d", key="saldo_remanescente")
-    with col8:
-        st.date_input("Vencimento", format="DD/MM/YYYY", key="vencimento_b")
+        col3, col4 = st.columns(2)
+        with col3:
+            st.selectbox("Localidade", localidades, key="localidade")
+        with col4:
+            st.date_input("Data de entrega", format="DD/MM/YYYY", key="data_entrega")
 
-    st.text_input("Recebedor", key="recebedor")
-    st.text_area("Observações", key="observacoes")
+        col5, col6 = st.columns(2)
+        with col5:
+            st.number_input("Quant. Entregue (Caixas)", min_value=0, step=1, format="%d", key="quant_entregue")
+        with col6:
+            st.date_input("Vencimento", format="DD/MM/YYYY", key="vencimento_a")
 
-    enviado = st.form_submit_button("📤 Registrar entrega")
+        col7, col8 = st.columns(2)
+        with col7:
+            st.number_input("Saldo Remanescente (Caixas)", min_value=0, step=1, format="%d", key="saldo_remanescente")
+        with col8:
+            st.date_input("Vencimento", format="DD/MM/YYYY", key="vencimento_b")
 
-    if enviado:
-        erro = False
+        st.text_input("Recebedor", key="recebedor")
+        st.text_area("Observações", key="observacoes")
 
-        if not st.session_state.data_entrega:
-            erro = True
-            st.error("❌ O campo 'Data de entrega' é obrigatório.")
+        enviado = st.form_submit_button("📤 Registrar entrega")
 
-        if st.session_state.quant_entregue > 0 and not st.session_state.vencimento_a:
-            erro = True
-            st.error("❌ Campo 'Vencimento' é obrigatório quando houver entrega.")
+        if enviado:
+            erro = False
 
-        if st.session_state.saldo_remanescente > 0 and not st.session_state.vencimento_b:
-            erro = True
-            st.error("❌ Campo 'Vencimento' é obrigatório quando houver saldo remanescente.")
+            if not st.session_state.data_entrega:
+                erro = True
+                st.error("❌ O campo 'Data de entrega' é obrigatório.")
 
-        if not erro:
-            entrega = {
-                "Quant. Pactuada": int(st.session_state.quant_pactuada),
-                "Entregador": st.session_state.entregador,
-                "Localidade": st.session_state.localidade,
-                "Data de entrega": formatar_data(st.session_state.data_entrega),
-                "Quant. Entregue": int(st.session_state.quant_entregue),
-                "Vencimento A": formatar_data(st.session_state.vencimento_a),
-                "Saldo Remanescente": int(st.session_state.saldo_remanescente),
-                "Vencimento B": formatar_data(st.session_state.vencimento_b),
-                "Recebedor": st.session_state.recebedor,
-                "Observações": st.session_state.observacoes,
-                "Email destino": EMAIL_DESTINO_FIXO,
-                "enviado": False
-            }
-            st.session_state.entregas.append(entrega)
-            salvar_entregas(st.session_state.entregas)
-            st.success("✅ Entrega registrada localmente. Será enviada por e-mail quando houver internet.")
+            if st.session_state.quant_entregue > 0 and not st.session_state.vencimento_a:
+                erro = True
+                st.error("❌ Campo 'Vencimento' é obrigatório quando houver entrega.")
+
+            if st.session_state.saldo_remanescente > 0 and not st.session_state.vencimento_b:
+                erro = True
+                st.error("❌ Campo 'Vencimento' é obrigatório quando houver saldo remanescente.")
+
+            if not erro:
+                entrega = {
+                    "Quant. Pactuada": int(st.session_state.quant_pactuada),
+                    "Entregador": st.session_state.entregador,
+                    "Localidade": st.session_state.localidade,
+                    "Data de entrega": formatar_data(st.session_state.data_entrega),
+                    "Quant. Entregue": int(st.session_state.quant_entregue),
+                    "Vencimento A": formatar_data(st.session_state.vencimento_a),
+                    "Saldo Remanescente": int(st.session_state.saldo_remanescente),
+                    "Vencimento B": formatar_data(st.session_state.vencimento_b),
+                    "Recebedor": st.session_state.recebedor,
+                    "Observações": st.session_state.observacoes,
+                    "Email destino": EMAIL_DESTINO_FIXO,
+                    "enviado": False
+                }
+                st.session_state.entregas.append(entrega)
+                salvar_entregas(st.session_state.entregas)
+                st.success("✅ Entrega registrada localmente. Será enviada por e-mail quando houver internet.")
+
+# Aba de registros
+with aba_registros:
+    st.title("📋 Registros de Entregas")
+
+    if st.session_state.entregas:
+        df = pd.DataFrame(st.session_state.entregas)
+        st.dataframe(df, use_container_width=True)
+    else:
+        st.info("Nenhum registro disponível.")
+
+
+

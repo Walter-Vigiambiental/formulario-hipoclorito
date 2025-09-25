@@ -103,7 +103,7 @@ if tem_conexao():
         salvar_entregas(st.session_state.entregas)
 
 # Criação das abas
-aba_lancamento, aba_registros = st.tabs(["➕ Lançamento", "📋 Registros"])
+aba_lancamento, aba_registros = st.tabs(["➕ Lançamentos", "📋 Registros"])
 
 # Aba de lançamentos
 with aba_lancamento:
@@ -195,6 +195,7 @@ with aba_registros:
         st.dataframe(df, use_container_width=True)
     else:
         st.info("Nenhum registro disponível.")
+
 
 
 
